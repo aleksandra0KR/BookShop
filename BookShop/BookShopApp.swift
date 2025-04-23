@@ -1,10 +1,3 @@
-//
-//  BookShopApp.swift
-//  BookShop
-//
-//  Created by Александра Крючкова on 23.04.2025.
-//
-
 import SwiftUI
 import SwiftData
 

@@ -1,10 +1,3 @@
-//
-//  Item.swift
-//  BookShop
-//
-//  Created by Александра Крючкова on 23.04.2025.
-//
-
 import Foundation
 import SwiftData
 
