@@ -1,1 +1,2 @@
-![image](https://github.com/user-attachments/assets/dfa6b22a-a915-4904-a01a-241d6083fb9d.gif)
+![image](https://github.com/aleksandra0KR/BookShop/main/ezgif-3d7cd1c8304e83.gif)
+
