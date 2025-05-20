@@ -6,6 +6,8 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var registered = false
 
+    var onRegister: ((User) -> Void)?
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Registration")
@@ -24,6 +26,8 @@ struct RegisterView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
 
             Button(action: {
+                let newUser = User(username: username, email: email, password: password)
+                onRegister?(newUser)
                 registered = true
             }) {
                 Text("Register")

@@ -1,8 +1,14 @@
 import SwiftUI
+import SwiftData
 
 struct CartView: View {
     @Binding var cart: [Book]
+    @Environment(\.modelContext) private var context
     @State private var showingCheckout = false
+    var currentUser: User?
+    @State private var cardNumber = ""
+    @State private var deliveryAddress = ""
+    @State private var showingConfirmation = false
 
     var totalPrice: Double {
         cart.reduce(0) { $0 + $1.price }
@@ -52,6 +58,15 @@ struct CartView: View {
                     }
 
                     VStack(spacing: 12) {
+                        TextField("Card Number", text: $cardNumber)
+                                              .keyboardType(.numberPad)
+                                              .textFieldStyle(RoundedBorderTextFieldStyle())
+                                              .padding(.horizontal)
+
+                       TextField("Delivery Address", text: $deliveryAddress)
+                                              .textFieldStyle(RoundedBorderTextFieldStyle())
+                                              .padding(.horizontal)
+                        
                         HStack {
                             Text("Total:")
                                 .font(.headline)
@@ -59,25 +74,48 @@ struct CartView: View {
                             Text("$\(totalPrice, specifier: "%.2f")")
                                 .font(.headline)
                         }
+                        .padding(.horizontal)
 
                         Button(action: {
-                            showingCheckout = true
+                            placeOrder()
                         }) {
                             Text("Place an order")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.blue)
+                                .background(cardNumber.isEmpty || deliveryAddress.isEmpty ? Color.gray : Color.blue)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                         }
+                        .disabled(cardNumber.isEmpty || deliveryAddress.isEmpty)
+                        .padding(.horizontal)
                     }
-                    .padding()
                 }
             }
             .navigationTitle("Cart")
-            .sheet(isPresented: $showingCheckout) {
-                CheckoutView(cart: cart, isPresented: $showingCheckout)
+            .alert("Order placed!", isPresented: $showingConfirmation) {
+                Button("OK", role: .cancel) { }
             }
         }
     }
+
+
+    func placeOrder() {
+        guard !cardNumber.isEmpty, !deliveryAddress.isEmpty else {
+            return
+        }
+        let user = currentUser ?? User(username: "Guest", email: "", password: "")
+        let order = Order(books: cart, user: user, cardNumber: cardNumber, deliveryAddress: deliveryAddress)
+        context.insert(order)
+        do {
+            try context.save()
+            cart.removeAll()
+            cardNumber = ""
+            deliveryAddress = ""
+            showingConfirmation = true
+        } catch {
+            print("Failed to save order: \(error)")
+        }
+    }
+
+
 }
