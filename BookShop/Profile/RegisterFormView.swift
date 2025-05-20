@@ -1,6 +1,10 @@
 import SwiftUI
+import SwiftData
 
-struct RegisterView: View {
+struct RegisterFormView: View {
+    @Environment(\.modelContext) private var modelContext
+    @AppStorage("currentUserEmail") private var currentUserEmail: String?
+
     @State private var username = ""
     @State private var email = ""
     @State private var password = ""
@@ -15,27 +19,23 @@ struct RegisterView: View {
                 .bold()
 
             TextField("Username", text: $username)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
                 .autocapitalization(.words)
 
             TextField("Email", text: $email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
                 .keyboardType(.emailAddress)
 
             SecureField("Password", text: $password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
 
-            Button(action: {
+            CustomButton(title: "Register", backgroundColor: .blue) {
                 let newUser = User(username: username, email: email, password: password)
+                modelContext.insert(newUser)
+                try? modelContext.save()
+                currentUserEmail = newUser.email
                 onRegister?(newUser)
                 registered = true
-            }) {
-                Text("Register")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
             }
 
             if registered {

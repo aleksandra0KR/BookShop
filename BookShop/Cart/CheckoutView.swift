@@ -44,7 +44,7 @@ struct CheckoutView: View {
                         .foregroundColor(.green)
                 }
 
-                Button("Place an order") {
+                PlaceOrderButton(isDisabled: false) {
                     orderPlaced = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         isPresented = false
@@ -58,4 +58,3 @@ struct CheckoutView: View {
         }
     }
 }
-
